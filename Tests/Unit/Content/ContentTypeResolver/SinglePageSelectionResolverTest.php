@@ -49,7 +49,8 @@ class SinglePageSelectionResolverTest extends TestCase
     public function testResolve(): void
     {
         $property = $this->prophesize(PropertyInterface::class);
-        $this->pageSelectionResolver->resolve([1], $property, 'en', [])->willReturn(
+        $uuid = '2c55ea29-a5ba-4847-90ce-038b86384ab5';
+        $this->pageSelectionResolver->resolve([$uuid], $property, 'en', [])->willReturn(
             new ContentView(
                 [
                     [
@@ -72,7 +73,7 @@ class SinglePageSelectionResolverTest extends TestCase
             )
         );
 
-        $result = $this->singlePageSelectionResolver->resolve(1, $property->reveal(), 'en');
+        $result = $this->singlePageSelectionResolver->resolve($uuid, $property->reveal(), 'en');
 
         $this->assertInstanceOf(ContentView::class, $result);
         $this->assertSame(
