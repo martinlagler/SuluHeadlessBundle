@@ -13,11 +13,10 @@
                 "template": "default",
                 "parent": "@uuid@",
                 "path": "@string@.match(\"/test-1\").optional()",
-                "url": "\/test-1",
+                "url": "/test-1",
                 "urls": {
-                    "de": "\/test-1"
+                    "de": "/test-1"
                 },
-                "lastModified": null,
                 "author": null,
                 "authored": "@string@.isDateTime()",
                 "changer": null,
@@ -43,7 +42,6 @@
                 "urls": {
                     "de": "/test-1a"
                 },
-                "lastModified": null,
                 "author": null,
                 "authored": "@string@.isDateTime()",
                 "changer": null,
@@ -65,11 +63,10 @@
                 "template": "default",
                 "parent": "@uuid@",
                 "path": "@string@.match(\"/test-2\").optional()",
-                "url": "\/test-2",
+                "url": "/test-2",
                 "urls": {
-                    "de": "\/test-2"
+                    "de": "/test-2"
                 },
-                "lastModified": null,
                 "author": null,
                 "authored": "@string@.isDateTime()",
                 "changer": null,
@@ -95,7 +92,6 @@
                 "urls": {
                     "de": "/test-1b"
                 },
-                "lastModified": null,
                 "author": null,
                 "authored": "@string@.isDateTime()",
                 "changer": null,

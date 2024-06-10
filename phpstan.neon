@@ -1,4 +1,5 @@
 includes:
+    - phpstan-baseline.neon
     - vendor/jangregor/phpstan-prophecy/extension.neon
     - vendor/phpstan/phpstan-doctrine/extension.neon
     - vendor/phpstan/phpstan-doctrine/rules.neon
@@ -11,7 +12,7 @@ parameters:
     paths:
         - .
     level: max
-    excludes_analyse:
+    excludePaths:
         - %currentWorkingDirectory%/DependencyInjection/Configuration.php
         - %currentWorkingDirectory%/Tests/Application/var/*
         - %currentWorkingDirectory%/vendor/*

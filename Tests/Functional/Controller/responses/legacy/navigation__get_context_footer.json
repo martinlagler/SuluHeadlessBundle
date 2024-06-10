@@ -13,11 +13,10 @@
                 "template": "default",
                 "parent": "@uuid@",
                 "path": "@string@.match(\"/test-3\").optional()",
-                "url": "\/test-3",
+                "url": "/test-3",
                 "urls": {
-                    "de": "\/test-3"
+                    "de": "/test-3"
                 },
-                "lastModified": null,
                 "author": null,
                 "authored": "@string@.isDateTime()",
                 "changer": null,
