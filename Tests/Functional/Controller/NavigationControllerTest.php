@@ -11,7 +11,7 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sulu\Bundle\HeadlessBundle\Tests\Functional\Controller;
+namespace Functional\Controller;
 
 use Sulu\Bundle\HeadlessBundle\Tests\Functional\BaseTestCase;
 use Sulu\Bundle\HeadlessBundle\Tests\Traits\CreateMediaTrait;
@@ -21,7 +21,7 @@ use Sulu\Bundle\MediaBundle\DataFixtures\ORM\LoadMediaTypes;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
-class NavigationControllerTest extends BaseTestCase
+class NavigationControllerTest2 extends BaseTestCase
 {
     use CreateMediaTrait;
     use CreatePageTrait;
@@ -112,23 +112,30 @@ class NavigationControllerTest extends BaseTestCase
      */
     public function provideAttributes(): \Generator
     {
+        $path = '';
+        /* Todo Can be removed after ending support of sulu 2.5 */
+        if (\version_compare(\Composer\InstalledVersions::getVersion('sulu/sulu') ?? '999.999.999', '2.6.0', '<')
+        ) {
+            $path = '/legacy/';
+        }
+
         yield [
             [],
-            'navigation__get.json',
+            $path . 'navigation__get.json',
         ];
 
         yield [
             [
                 'context' => 'footer',
             ],
-            'navigation__get_context_footer.json',
+            $path . 'navigation__get_context_footer.json',
         ];
 
         yield [
             [
                 'depth' => 2,
             ],
-            'navigation__get_depth_2.json',
+            $path . 'navigation__get_depth_2.json',
         ];
 
         yield [
@@ -136,21 +143,21 @@ class NavigationControllerTest extends BaseTestCase
                 'depth' => 2,
                 'flat' => 'true',
             ],
-            'navigation__get_depth_2_flat.json',
+            $path . 'navigation__get_depth_2_flat.json',
         ];
 
         yield [
             [
                 'excerpt' => 'true',
             ],
-            'navigation__get_excerpt.json',
+            $path . 'navigation__get_excerpt.json',
         ];
 
         yield [
             [
                 'uuid' => true,
             ],
-            'navigation__get_uuid.json',
+            $path . 'navigation__get_uuid.json',
         ];
     }
 
@@ -173,6 +180,7 @@ class NavigationControllerTest extends BaseTestCase
         $this->websiteClient->request('GET', '/api/navigations/' . $context . '?' . \http_build_query($filters));
 
         $response = $this->websiteClient->getResponse();
+
         $this->assertInstanceOf(Response::class, $response);
 
         $this->assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
