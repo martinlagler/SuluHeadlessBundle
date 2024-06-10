@@ -21,7 +21,7 @@ use Sulu\Bundle\MediaBundle\DataFixtures\ORM\LoadMediaTypes;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\Response;
 
-class NavigationControllerTest2 extends BaseTestCase
+class NavigationControllerTest extends BaseTestCase
 {
     use CreateMediaTrait;
     use CreatePageTrait;
