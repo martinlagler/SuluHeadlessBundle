@@ -54,8 +54,8 @@ class SinglePageSelectionResolverTest extends TestCase
             new ContentView(
                 [
                     [
-                        'id' => '1',
-                        'uuid' => '1',
+                        'id' => $uuid,
+                        'uuid' => $uuid,
                         'nodeType' => 1,
                         'path' => '/testpage',
                         'changer' => 1,
@@ -78,8 +78,8 @@ class SinglePageSelectionResolverTest extends TestCase
         $this->assertInstanceOf(ContentView::class, $result);
         $this->assertSame(
             [
-                'id' => '1',
-                'uuid' => '1',
+                'id' => $uuid,
+                'uuid' => $uuid,
                 'nodeType' => 1,
                 'path' => '/testpage',
                 'changer' => 1,
@@ -96,7 +96,7 @@ class SinglePageSelectionResolverTest extends TestCase
         );
         $this->assertSame(
             [
-                'id' => 1,
+                'id' => $uuid,
             ],
             $result->getView()
         );
