@@ -29,3 +29,5 @@ Tests/Application/.env.*.local
 package-lock.json
 node_modules/
 build/
+
+.php-version

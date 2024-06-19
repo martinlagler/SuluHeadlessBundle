@@ -41,11 +41,6 @@ parameters:
 			path: Content/ContentTypeResolver/ImageMapResolver.php
 
 		-
-			message: "#^Cannot use array destructuring on string\\.$#"
-			count: 1
-			path: Content/ContentTypeResolver/PageSelectionResolver.php
-
-		-
 			message: "#^Cannot access offset 0 on mixed\\.$#"
 			count: 1
 			path: Content/ContentTypeResolver/SingleMediaSelectionResolver.php
@@ -106,11 +101,6 @@ parameters:
 			path: Content/DataProviderResolver/MediaDataProviderResolver.php
 
 		-
-			message: "#^Cannot use array destructuring on string\\.$#"
-			count: 1
-			path: Content/DataProviderResolver/PageDataProviderResolver.php
-
-		-
 			message: "#^PHPDoc tag @var above a method has no effect\\.$#"
 			count: 1
 			path: Content/DataProviderResolver/PageDataProviderResolver.php
@@ -139,11 +129,6 @@ parameters:
 			message: "#^Parameter \\#4 \\$locale of method Sulu\\\\Bundle\\\\HeadlessBundle\\\\Content\\\\DataProviderResolver\\\\PageDataProviderResolver\\:\\:loadPageStructures\\(\\) expects string, mixed given\\.$#"
 			count: 1
 			path: Content/DataProviderResolver/PageDataProviderResolver.php
-
-		-
-			message: "#^Cannot use array destructuring on string\\.$#"
-			count: 1
-			path: Content/DataProviderResolver/SnippetDataProviderResolver.php
 
 		-
 			message: "#^PHPDoc tag @var above a method has no effect\\.$#"

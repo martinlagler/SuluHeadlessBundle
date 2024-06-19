@@ -53,7 +53,7 @@ class SnippetAreaController
     private $serializer;
 
     /**
-     * @var ReferenceStoreInterface
+     * @var ReferenceStoreInterface|null
      */
     private $snippetAreaReferenceStore;
 
@@ -77,7 +77,7 @@ class SnippetAreaController
         ContentMapperInterface $contentMapper,
         StructureResolverInterface $structureResolver,
         SerializerInterface $serializer,
-        ReferenceStoreInterface $snippetReferenceStore,
+        ?ReferenceStoreInterface $snippetReferenceStore,
         int $maxAge,
         int $sharedMaxAge,
         int $cacheLifetime
@@ -126,7 +126,9 @@ class SnippetAreaController
             throw new NotFoundHttpException(\sprintf('Snippet for snippet area "%s" does not exist in locale "%s"', $area, $locale));
         }
 
-        $this->snippetAreaReferenceStore->add($area);
+        if ($this->snippetAreaReferenceStore) {
+            $this->snippetAreaReferenceStore->add($area);
+        }
 
         $resolvedSnippet = $this->structureResolver->resolve(
             $snippet,

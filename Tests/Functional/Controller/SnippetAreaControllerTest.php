@@ -15,7 +15,9 @@ namespace Sulu\Bundle\HeadlessBundle\Tests\Functional\Controller;
 
 use Sulu\Bundle\HeadlessBundle\Tests\Functional\BaseTestCase;
 use Sulu\Bundle\HeadlessBundle\Tests\Traits\CreateSnippetTrait;
+use Sulu\Bundle\WebsiteBundle\ReferenceStore\ReferenceStoreInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class SnippetAreaControllerTest extends BaseTestCase
@@ -26,6 +28,11 @@ class SnippetAreaControllerTest extends BaseTestCase
      * @var KernelBrowser
      */
     private $websiteClient;
+
+    /**
+     * @var ReferenceStoreInterface|null
+     */
+    private $snippetAreaReferenceStore;
 
     public static function setUpBeforeClass(): void
     {
@@ -62,6 +69,10 @@ class SnippetAreaControllerTest extends BaseTestCase
     protected function setUp(): void
     {
         $this->websiteClient = $this->createWebsiteClient();
+
+        /** @var ReferenceStoreInterface|null $snippetAreaReferenceStore */
+        $snippetAreaReferenceStore = self::getContainer()->get('sulu_snippet.reference_store.snippet_area', ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        $this->snippetAreaReferenceStore = $snippetAreaReferenceStore;
     }
 
     /**
@@ -125,7 +136,10 @@ class SnippetAreaControllerTest extends BaseTestCase
 
         if (200 === $response->getStatusCode()) {
             $this->assertStringContainsString('public', (string) $response->headers->get('Cache-Control'));
-            $this->assertStringContainsString('snippet_area-default', (string) $response->headers->get('x-cache-tags'));
+
+            if ($this->snippetAreaReferenceStore) {
+                $this->assertStringContainsString('snippet_area-default', (string) $response->headers->get('x-cache-tags'));
+            }
         }
 
         if (null !== $expectedPatternFile) {
