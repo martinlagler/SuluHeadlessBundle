@@ -22,7 +22,6 @@ use Sulu\Component\Content\Compat\PropertyInterface;
 use Sulu\Component\Content\Compat\PropertyParameter;
 use Sulu\Component\SmartContent\DataProviderAliasInterface;
 use Sulu\Component\Tag\Request\TagRequestHandlerInterface;
-use Sulu\Exception\FeatureNotImplementedException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SmartContentResolver implements ContentTypeResolverInterface
@@ -85,6 +84,12 @@ class SmartContentResolver implements ContentTypeResolverInterface
     {
         // gather data provider and effective parameters
         $providerResolver = $this->getProviderResolver($property);
+
+        if (null === $providerResolver) {
+            // Return null if no provider is registered
+            return new ContentView(null, \is_array($result) ? $result : []);
+        }
+
         /** @var PropertyParameter[] $params */
         $params = \array_merge(
             $this->getDefaultParams($providerResolver),
@@ -166,7 +171,7 @@ class SmartContentResolver implements ContentTypeResolverInterface
         return new ContentView($result->getItems(), $viewData);
     }
 
-    private function getProviderResolver(PropertyInterface $property): DataProviderResolverInterface
+    private function getProviderResolver(PropertyInterface $property): ?DataProviderResolverInterface
     {
         $params = $property->getParams();
 
@@ -176,11 +181,7 @@ class SmartContentResolver implements ContentTypeResolverInterface
             $providerAlias = $params['provider']->getValue();
         }
 
-        if (!\array_key_exists($providerAlias, $this->resolvers)) {
-            throw new FeatureNotImplementedException();
-        }
-
-        return $this->resolvers[$providerAlias];
+        return $this->resolvers[$providerAlias] ?? null;
     }
 
     /**

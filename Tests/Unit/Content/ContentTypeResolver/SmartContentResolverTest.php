@@ -29,7 +29,6 @@ use Sulu\Component\Content\Compat\PropertyParameter;
 use Sulu\Component\Content\Compat\StructureInterface;
 use Sulu\Component\SmartContent\Configuration\ProviderConfigurationInterface;
 use Sulu\Component\Tag\Request\TagRequestHandlerInterface;
-use Sulu\Exception\FeatureNotImplementedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -272,11 +271,12 @@ class SmartContentResolverTest extends TestCase
 
     public function testResolveMissingProviderResolver(): void
     {
-        $this->expectException(FeatureNotImplementedException::class);
-
         $property = $this->prophesize(PropertyInterface::class);
         $property->getParams()->willReturn(['provider' => new PropertyParameter('provider', 'contact')]);
 
-        $this->smartContentResolver->resolve([], $property->reveal(), 'en');
+        $result = $this->smartContentResolver->resolve(['key' => 'value'], $property->reveal(), 'en');
+
+        self::assertNull($result->getContent());
+        self::assertSame(['key' => 'value'], $result->getView());
     }
 }
