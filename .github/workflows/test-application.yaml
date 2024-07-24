@@ -26,6 +26,7 @@ jobs:
                       coverage: false
                       dependency-versions: 'lowest'
                       tools: 'composer:v2'
+                      phpunit-config: 'phpunit-9.xml.dist'
                       env:
                           SYMFONY_DEPRECATIONS_HELPER: disabled
 
@@ -33,6 +34,7 @@ jobs:
                       coverage: true
                       dependency-versions: 'highest'
                       tools: 'composer:v2'
+                      phpunit-config: 'phpunit-9.xml.dist'
                       env:
                           SYMFONY_DEPRECATIONS_HELPER: weak
 
@@ -64,6 +66,14 @@ jobs:
                       env:
                           SYMFONY_DEPRECATIONS_HELPER: weak
 
+                    - php-version: '8.4'
+                      coverage: false
+                      dependency-versions: 'highest'
+                      tools: 'composer:v2'
+                      composer-options: '--ignore-platform-reqs'
+                      env:
+                          SYMFONY_DEPRECATIONS_HELPER: weak
+
         services:
             mysql:
                 image: mysql:5.7
@@ -85,8 +95,10 @@ jobs:
                   coverage: pcov
                   tools: ${{ matrix.tools }}
 
-            - name: Remove not required test tooling
-              run: composer remove "*php-cs-fixer*" "*phpstan*" --no-update --dev
+            - name: Remove Lint Tools
+              # These tools are not required to run tests, so we are removing them to improve dependency resolving and
+              # testing lowest versions.
+              run: composer remove "*php-cs-fixer*" "*phpstan*" "*rector*" --dev --no-update
 
             - name: Install composer dependencies
               uses: ramsey/composer-install@v3
@@ -98,10 +110,10 @@ jobs:
               run: composer bootstrap-test-environment
 
             - name: Execute unit test cases
-              run: composer test -- Tests/Unit --coverage-php var/coverage.php --coverage-html coverage-report --log-junit var/junit.xml
+              run: composer test -- Tests/Unit --coverage-php var/coverage.php --coverage-html coverage-report --log-junit var/junit.xml --config ${{ matrix.phpunit-config || 'phpunit.xml.dist' }}
 
             - name: Execute functional test cases
-              run: composer test -- Tests/Functional --log-junit var/junit.xml
+              run: composer test -- Tests/Functional --log-junit var/junit.xml --config ${{ matrix.phpunit-config || 'phpunit.xml.dist' }}
 
             - name: Check code coverage
               if: ${{ matrix.coverage }}
