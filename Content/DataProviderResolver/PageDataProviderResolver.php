@@ -102,7 +102,7 @@ class PageDataProviderResolver implements DataProviderResolverInterface
 
         $pageIds = [];
         foreach ($providerResult->getItems() as $resultItem) {
-            $pageIds[] = $resultItem->getId();
+            $pageIds[] = (string) $resultItem->getId();
         }
 
         /** @var PropertyParameter[] $propertiesParamValue */

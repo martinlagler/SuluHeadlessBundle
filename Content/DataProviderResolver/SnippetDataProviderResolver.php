@@ -95,7 +95,7 @@ class SnippetDataProviderResolver implements DataProviderResolverInterface
 
         $snippetIds = [];
         foreach ($providerResult->getItems() as $resultItem) {
-            $snippetIds[] = $resultItem->getId();
+            $snippetIds[] = (string) $resultItem->getId();
         }
 
         /** @var PropertyParameter[] $propertiesParamValue */

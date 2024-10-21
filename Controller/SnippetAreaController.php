@@ -17,6 +17,7 @@ use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerInterface;
 use Sulu\Bundle\HeadlessBundle\Content\StructureResolverInterface;
 use Sulu\Bundle\HttpCacheBundle\Cache\SuluHttpCache;
+use Sulu\Bundle\HttpCacheBundle\CacheLifetime\CacheLifetimeRequestStore;
 use Sulu\Bundle\SnippetBundle\Snippet\DefaultSnippetManagerInterface;
 use Sulu\Bundle\WebsiteBundle\ReferenceStore\ReferenceStoreInterface;
 use Sulu\Component\Content\Mapper\ContentMapperInterface;
@@ -72,6 +73,11 @@ class SnippetAreaController
      */
     private $cacheLifetime;
 
+    /**
+     * @var CacheLifetimeRequestStore|null
+     */
+    private $cacheLifetimeRequestStore;
+
     public function __construct(
         DefaultSnippetManagerInterface $defaultSnippetManager,
         ContentMapperInterface $contentMapper,
@@ -80,7 +86,8 @@ class SnippetAreaController
         ?ReferenceStoreInterface $snippetReferenceStore,
         int $maxAge,
         int $sharedMaxAge,
-        int $cacheLifetime
+        int $cacheLifetime,
+        ?CacheLifetimeRequestStore $cacheLifetimeRequestStore = null
     ) {
         $this->defaultSnippetManager = $defaultSnippetManager;
         $this->contentMapper = $contentMapper;
@@ -90,6 +97,14 @@ class SnippetAreaController
         $this->maxAge = $maxAge;
         $this->sharedMaxAge = $sharedMaxAge;
         $this->cacheLifetime = $cacheLifetime;
+        $this->cacheLifetimeRequestStore = $cacheLifetimeRequestStore;
+
+        if (null === $cacheLifetimeRequestStore) {
+            @\trigger_error(
+                'Instantiating the SnippetAreaController without the $cacheLifetimeRequestStore argument is deprecated!',
+                \E_USER_DEPRECATED
+            );
+        }
     }
 
     public function getAction(Request $request, string $area): Response
@@ -151,7 +166,17 @@ class SnippetAreaController
         $response->setPublic();
         $response->setMaxAge($this->maxAge);
         $response->setSharedMaxAge($this->sharedMaxAge);
-        $response->headers->set(SuluHttpCache::HEADER_REVERSE_PROXY_TTL, (string) $this->cacheLifetime);
+
+        $cacheLifetime = $this->cacheLifetime;
+        if (null !== $this->cacheLifetimeRequestStore) {
+            $this->cacheLifetimeRequestStore->setCacheLifetime($this->cacheLifetime);
+            $cacheLifetime = $this->cacheLifetimeRequestStore->getCacheLifetime();
+        }
+
+        $response->headers->set(
+            SuluHttpCache::HEADER_REVERSE_PROXY_TTL,
+            (string) $cacheLifetime
+        );
 
         return $response;
     }

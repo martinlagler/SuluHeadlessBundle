@@ -63,6 +63,48 @@ class SnippetAreaControllerTest extends BaseTestCase
             'template' => 'other',
         ], 'de');
 
+        $currentTime = (new \DateTime());
+        $scheduledBlockEndtime = (new \DateTime())->add(new \DateInterval('PT30M'));
+        $snippetWithBlocks = self::createSnippet(
+            [
+                'title' => 'My Snippet with blocks',
+                'description' => 'Description of my snippet with blocks',
+                'template' => 'default-blocks',
+                'blocks' => [
+                    [
+                        'type' => 'editor_image',
+                        'article' => '<p>Article text</p>',
+                        'settings' => [
+                            'schedules_enabled' => true,
+                            'schedules' => [
+                                [
+                                    'type' => 'weekly',
+                                    'days' => [
+                                        'monday',
+                                        'tuesday',
+                                        'wednesday',
+                                        'thursday',
+                                        'friday',
+                                        'saturday',
+                                        'sunday',
+                                    ],
+                                    'start' => $currentTime->format('H:i:s'),
+                                    'end' => $scheduledBlockEndtime->format('H:i:s'),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'de'
+        );
+        $defaultSnippetManager->save(
+            'sulu_io',
+            'default-blocks',
+            $snippetWithBlocks->getUuid(),
+            'de',
+        );
+
         static::ensureKernelShutdown();
     }
 
@@ -84,18 +126,24 @@ class SnippetAreaControllerTest extends BaseTestCase
             '/api/snippet-areas/default',
             Response::HTTP_OK,
             'snippet-area__default.json',
+            null,
+            86400,
         ];
 
         yield [
             '/api/snippet-areas/default?includeExtension=true',
             Response::HTTP_OK,
             'snippet-area__default_include-extension.json',
+            null,
+            86400,
         ];
 
         yield [
             '/api/snippet-areas/default?includeExtension=false',
             Response::HTTP_OK,
             'snippet-area__default.json',
+            null,
+            86400,
         ];
 
         yield [
@@ -118,6 +166,14 @@ class SnippetAreaControllerTest extends BaseTestCase
             null,
             'Snippet area "invalid" does not exist',
         ];
+
+        yield [
+            '/api/snippet-areas/default-blocks',
+            Response::HTTP_OK,
+            null,
+            null,
+            1800,
+        ];
     }
 
     /**
@@ -127,7 +183,8 @@ class SnippetAreaControllerTest extends BaseTestCase
         string $url,
         int $statusCode = Response::HTTP_OK,
         ?string $expectedPatternFile = null,
-        ?string $errorMessage = null
+        ?string $errorMessage = null,
+        ?int $reverseProxyTtl = null
     ): void {
         $this->websiteClient->request('GET', $url);
 
@@ -162,6 +219,11 @@ class SnippetAreaControllerTest extends BaseTestCase
 
             self::assertTrue(\property_exists($responseObject, 'message'));
             self::assertSame($errorMessage, $responseObject->message);
+        }
+
+        if (null !== $reverseProxyTtl) {
+            // we need to use less than because the reverse proxy ttl is calculated during runtime
+            self::assertLessThanOrEqual($reverseProxyTtl, (int) $response->headers->get('X-Reverse-Proxy-TTL'));
         }
     }
 }
